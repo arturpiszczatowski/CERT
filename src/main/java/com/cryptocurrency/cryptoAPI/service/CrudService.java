@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 public abstract class CrudService<T> {
-    JpaRepository<T, Long> repository;
+    protected JpaRepository<T, Long> repository;
 
     public CrudService(JpaRepository<T, Long> repository) {
         this.repository = repository;
