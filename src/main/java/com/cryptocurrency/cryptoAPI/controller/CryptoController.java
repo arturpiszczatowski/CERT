@@ -26,6 +26,9 @@ public class CryptoController {
         Currency currency = new Currency("BTC", 123.1123);
         currencyRepository.save(currency);
 
+        var allCurrencies = currencyRepository.findAll();
+        System.out.println(allCurrencies);
+
         return res;
     }
 }
