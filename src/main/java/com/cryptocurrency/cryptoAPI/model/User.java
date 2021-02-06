@@ -11,7 +11,7 @@ public class User {
     Long id;
     String login;
     String password;
-    Long value;
+    Double value;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
     List<Currency> currencies;
@@ -40,11 +40,11 @@ public class User {
         this.password = password;
     }
 
-    public Long getValue() {
+    public Double getValue() {
         return value;
     }
 
-    public void setValue(Long value) {
+    public void setValue(Double value) {
         this.value = value;
     }
 

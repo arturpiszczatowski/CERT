@@ -9,10 +9,18 @@ public class Currency {
     Long id;
 
     String symbol;
-    Long value;
+    Double value;
 
     @ManyToOne
     User user;
+
+    public Currency(String symbol, Double value) {
+        this.symbol = symbol;
+        this.value = value;
+    }
+
+    public Currency() {
+    }
 
     public Long getId() {
         return id;
@@ -30,11 +38,11 @@ public class Currency {
         this.symbol = symbol;
     }
 
-    public Long getValue() {
+    public Double getValue() {
         return value;
     }
 
-    public void setValue(Long value) {
+    public void setValue(Double value) {
         this.value = value;
     }
 }
