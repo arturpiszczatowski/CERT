@@ -9,9 +9,9 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     Long id;
-    String login;
+    String username;
     String password;
-    Double value;
+    Double money;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
     List<Currency> currencies;
@@ -24,12 +24,12 @@ public class User {
         this.id = id;
     }
 
-    public String getLogin() {
-        return login;
+    public String getUsername() {
+        return username;
     }
 
-    public void setLogin(String login) {
-        this.login = login;
+    public void setUsername(String login) {
+        this.username = login;
     }
 
     public String getPassword() {
@@ -40,12 +40,12 @@ public class User {
         this.password = password;
     }
 
-    public Double getValue() {
-        return value;
+    public Double getMoney() {
+        return money;
     }
 
-    public void setValue(Double value) {
-        this.value = value;
+    public void setMoney(Double value) {
+        this.money = value;
     }
 
     public List<Currency> getCurrencies() {

@@ -25,7 +25,7 @@ public class CurrencyService extends CrudService<Currency>{
     public HashMap<String, Double> calcValueFor(String symbol){
         HashMap<String, Double> result = new HashMap<>();
         RestTemplate restTemplate = new RestTemplate();
-        var res = restTemplate.getForObject(API_URL, HashMap.class);
+        var res = restTemplate.getForObject(API_URL+"data/price?tsyms=" + CURRENCY+"&fsym="+symbol, HashMap.class);
         result.put(symbol, (Double) res.get(CURRENCY));
         return result;
     }
