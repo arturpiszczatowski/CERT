@@ -6,6 +6,16 @@ import java.util.List;
 @Entity(name = "user")
 public class User {
 
+    public User(String username, String password, Double money) {
+        this.username = username;
+        this.password = password;
+        this.money = money;
+    }
+
+    public User(){
+
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     Long id;

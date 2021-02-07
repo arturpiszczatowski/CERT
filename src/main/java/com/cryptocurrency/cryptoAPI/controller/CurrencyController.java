@@ -9,8 +9,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @RestController
 public class CurrencyController extends CrudController<Currency> {
@@ -27,6 +29,14 @@ public class CurrencyController extends CrudController<Currency> {
 
     @Override
     public Function<Currency, Map<String, Object>> transformToDTO() {
-        return null;
+        return currency -> {
+            var payload = new LinkedHashMap<String, Object>();
+            payload.put("id", currency.getId());
+            payload.put("symbol", currency.getSymbol());
+            payload.put("value", currency.getValue());
+            payload.put("user", currency.getUser().getUsername());
+
+            return payload;
+        };
     }
 }

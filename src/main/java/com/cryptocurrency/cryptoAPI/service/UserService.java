@@ -2,6 +2,8 @@ package com.cryptocurrency.cryptoAPI.service;
 
 import com.cryptocurrency.cryptoAPI.model.Currency;
 import com.cryptocurrency.cryptoAPI.model.User;
+import com.cryptocurrency.cryptoAPI.repository.CurrencyRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
@@ -9,9 +11,15 @@ import org.springframework.stereotype.Service;
 public class UserService extends CrudService<User> {
     CurrencyService currencyService;
 
+    @Autowired
+    CurrencyRepository currencyRepository;
+
     public UserService(JpaRepository<User, Long> repository, CurrencyService currencyService) {
         super(repository);
         this.currencyService = currencyService;
+        User brodo = new User("BrodoFagins","123", 1000000.0); //Temporary richboi
+        repository.save(brodo);
+
     }
 
     @Override
@@ -29,9 +37,12 @@ public class UserService extends CrudService<User> {
         if (!sufficientFunds)
             return false;
 
-        user.setMoney(currentFunds - intendedBuy);
-        Currency currency = findCurrency(symbol);
+        Currency currency = new Currency(symbol, currencyService.calcValueFor(symbol).get(symbol), user);
+        if(currency == null)
+            return false;
+
         addCurrency(username, currency, amount);
+        user.setMoney(currentFunds - intendedBuy);
         repository.save(user);
         return true;
     }
@@ -65,17 +76,10 @@ public class UserService extends CrudService<User> {
     }
 
     protected Double calculatePrice(String symbol, int amount) {
-        double price = currencyService.calcValueFor(symbol).get(Double.class) * amount;
+        double price = currencyService.calcValueFor(symbol).get(symbol) * amount;
         return price;
     }
 
-    protected Currency findCurrency(String symbol){
-        Currency currency = currencyService.getAll().stream()
-                .filter(currencies -> currencies.getSymbol().equals(symbol))
-                .findAny()
-                .orElse(null);
-        return currency;
-    }
 
     protected void addCurrency(String username, Currency currency, int amount) {
         User user = findUserByUsername(username);
@@ -85,17 +89,17 @@ public class UserService extends CrudService<User> {
             amount--;
         }
         user.setCurrencies(updatedCurrencies);
-        repository.save(user);
+        currencyRepository.saveAll(user.getCurrencies());
     }
 
     protected void removeCurrency(String username, String symbol, int amount) {
         User user = findUserByUsername(username);
         var updatedCurrencies = user.getCurrencies();
         while (amount > 0) {
-            updatedCurrencies.remove(findCurrency(symbol));
+            updatedCurrencies.remove(currencyService.findBySymbol(symbol));
             amount--;
         }
         user.setCurrencies(updatedCurrencies);
-        repository.save(user);
+        currencyRepository.saveAll(user.getCurrencies());
     }
 }

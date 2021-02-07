@@ -1,5 +1,7 @@
 package com.cryptocurrency.cryptoAPI.model;
 
+import javassist.compiler.ast.Symbol;
+
 import javax.persistence.*;
 
 @Entity(name = "currency")
@@ -9,14 +11,16 @@ public class Currency {
     Long id;
 
     String symbol;
+
     Double value;
 
     @ManyToOne
     User user;
 
-    public Currency(String symbol, Double value) {
+    public Currency(String symbol, Double value, User user) {
         this.symbol = symbol;
         this.value = value;
+        this.user = user;
     }
 
     public Currency() {
@@ -44,5 +48,13 @@ public class Currency {
 
     public void setValue(Double value) {
         this.value = value;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }
