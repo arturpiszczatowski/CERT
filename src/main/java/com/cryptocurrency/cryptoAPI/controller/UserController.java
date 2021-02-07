@@ -2,11 +2,14 @@ package com.cryptocurrency.cryptoAPI.controller;
 
 import com.cryptocurrency.cryptoAPI.model.User;
 import com.cryptocurrency.cryptoAPI.repository.UserRepository;
+import com.cryptocurrency.cryptoAPI.security.TokenAuthenticationFilter;
 import com.cryptocurrency.cryptoAPI.service.CurrencyService;
 import com.cryptocurrency.cryptoAPI.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.LinkedHashMap;
@@ -32,20 +35,20 @@ public class UserController extends CrudController<User> {
 
     @PostMapping("/buy/{symbol}/{amount}")
     public ResponseEntity buyCurrecy(@PathVariable String symbol, @PathVariable int amount) {
-        userService.buy("BrodoFagins", symbol, amount);
+        userService.buy(currentUserName(), symbol, amount);
         return new ResponseEntity(HttpStatus.OK);
     }
 
     @PostMapping("/sell/{symbol}/{amount}")
     public ResponseEntity sellCurrency(@PathVariable String symbol, @PathVariable int amount) {
-        userService.sell("BrodoFagins", symbol, amount);
+        userService.sell(currentUserName(), symbol, amount);
         return new ResponseEntity(HttpStatus.OK);
     }
 
     @GetMapping("/view")
     public ResponseEntity viewGoodies() {
-        var map =currencyService.findByUsername("BrodoFagins");
-        return new ResponseEntity(map,HttpStatus.OK);
+        var map = currencyService.findByUsername(currentUserName());
+        return new ResponseEntity(map, HttpStatus.OK);
     }
 
     @Override
@@ -60,5 +63,11 @@ public class UserController extends CrudController<User> {
                     .collect(Collectors.toList()));
             return payload;
         };
+    }
+
+    public String currentUserName(){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String name = auth.getName();
+        return name;
     }
 }

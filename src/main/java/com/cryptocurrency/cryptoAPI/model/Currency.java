@@ -1,7 +1,5 @@
 package com.cryptocurrency.cryptoAPI.model;
 
-import javassist.compiler.ast.Symbol;
-
 import javax.persistence.*;
 
 @Entity(name = "currency")

@@ -20,7 +20,9 @@ public class User implements UserDetails {
         this.authority = authority;
     }
 
-    public User(){}
+    public User(){
+        this.money = 1000.0; //lil starter-pack for newcomers
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

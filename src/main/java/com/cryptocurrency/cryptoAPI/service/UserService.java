@@ -133,6 +133,7 @@ public class UserService extends CrudService<User> implements UserDetailsService
         currencyRepository.saveAll(user.getCurrencies());
     }
 
+
     public PasswordEncoder getPasswordEncoder() {
         return passwordEncoder;
     }

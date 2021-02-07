@@ -65,5 +65,6 @@ public class TokenAuthenticationFilter extends UsernamePasswordAuthenticationFil
         response.getWriter().write(body);
         response.getWriter().flush();
     }
+
 }
 
