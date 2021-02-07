@@ -17,6 +17,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST, "/login", "/register").permitAll()
                 .antMatchers(HttpMethod.GET, "/calc/**").permitAll()
                 .antMatchers( "/user/**").hasAnyRole("USER", "PRIVILEGED", "ADMIN")
+                .antMatchers( "/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
                 .and()
                 .addFilter(new TokenAuthenticationFilter(authenticationManager()))
