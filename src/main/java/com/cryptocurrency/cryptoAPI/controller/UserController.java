@@ -1,18 +1,17 @@
 package com.cryptocurrency.cryptoAPI.controller;
 
 import com.cryptocurrency.cryptoAPI.model.User;
+import com.cryptocurrency.cryptoAPI.repository.UserRepository;
+import com.cryptocurrency.cryptoAPI.service.CurrencyService;
 import com.cryptocurrency.cryptoAPI.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Function;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 @RestController
@@ -20,13 +19,19 @@ import java.util.stream.Collectors;
 public class UserController extends CrudController<User> {
     UserService userService;
 
+    @Autowired
+    UserRepository userRepository;
+
+    @Autowired
+    CurrencyService currencyService;
+
     protected UserController(UserService service) {
         super(service);
         this.userService = service;
     }
 
     @PostMapping("/buy/{symbol}/{amount}")
-    public ResponseEntity buyCurrency(@PathVariable String symbol, @PathVariable int amount) {
+    public ResponseEntity buyCurrecy(@PathVariable String symbol, @PathVariable int amount) {
         userService.buy("BrodoFagins", symbol, amount);
         return new ResponseEntity(HttpStatus.OK);
     }
@@ -35,6 +40,12 @@ public class UserController extends CrudController<User> {
     public ResponseEntity sellCurrency(@PathVariable String symbol, @PathVariable int amount) {
         userService.sell("BrodoFagins", symbol, amount);
         return new ResponseEntity(HttpStatus.OK);
+    }
+
+    @GetMapping("/view")
+    public ResponseEntity viewGoodies() {
+        var map =currencyService.findByUsername("BrodoFagins");
+        return new ResponseEntity(map,HttpStatus.OK);
     }
 
     @Override

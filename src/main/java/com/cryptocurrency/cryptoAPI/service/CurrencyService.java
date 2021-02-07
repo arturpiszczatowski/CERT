@@ -7,6 +7,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static com.cryptocurrency.cryptoAPI.util.ApiConstants.API_URL;
 import static com.cryptocurrency.cryptoAPI.util.ApiConstants.CURRENCY;
@@ -36,5 +39,13 @@ public class CurrencyService extends CrudService<Currency>{
         if(currency.isEmpty())
             return null;
         return currency.get();
+    }
+
+    public Map<String, Long> findByUsername(String username){
+        var currency = repository.findAll().stream()
+                .filter(c -> c.getUser().getUsername().equals(username))
+                .map(c -> c.getSymbol())
+                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+        return currency;
     }
 }

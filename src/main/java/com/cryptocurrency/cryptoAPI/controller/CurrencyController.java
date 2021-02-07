@@ -6,13 +6,14 @@ import com.cryptocurrency.cryptoAPI.service.CurrencyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @RestController
 public class CurrencyController extends CrudController<Currency> {
@@ -27,7 +28,6 @@ public class CurrencyController extends CrudController<Currency> {
         return new ResponseEntity<>(calc, HttpStatus.OK);
     }
 
-    @Override
     public Function<Currency, Map<String, Object>> transformToDTO() {
         return currency -> {
             var payload = new LinkedHashMap<String, Object>();

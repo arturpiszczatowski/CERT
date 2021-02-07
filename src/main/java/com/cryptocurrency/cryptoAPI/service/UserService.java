@@ -89,6 +89,7 @@ public class UserService extends CrudService<User> {
             amount--;
         }
         user.setCurrencies(updatedCurrencies);
+        repository.save(user);
         currencyRepository.saveAll(user.getCurrencies());
     }
 
@@ -100,6 +101,7 @@ public class UserService extends CrudService<User> {
             amount--;
         }
         user.setCurrencies(updatedCurrencies);
+        repository.save(user);
         currencyRepository.saveAll(user.getCurrencies());
     }
 }
