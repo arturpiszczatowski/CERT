@@ -43,7 +43,7 @@ public class UserService extends CrudService<User> {
 
         var intendedSell = calculatePrice(symbol, amount);
 
-        var amountOfAvailableCurrencies = user.getCurrencies().stream()
+        var amountOfAvailableCurrencies = currentCurrencies.stream()
                 .filter(currencies -> currencies.getSymbol().equals(symbol))
                 .count();
 
@@ -51,6 +51,8 @@ public class UserService extends CrudService<User> {
             return false;
 
         removeCurrency(username, symbol, (int) amountOfAvailableCurrencies);
+        user.setMoney(user.getMoney() + intendedSell);
+        repository.save(user);
         return true;
     }
 
