@@ -5,15 +5,19 @@ import com.cryptocurrency.cryptoAPI.model.User;
 import com.cryptocurrency.cryptoAPI.repository.CurrencyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 @Service
-public class UserService extends CrudService<User> {
+public class UserService extends CrudService<User> implements UserDetailsService {
+    private final PasswordEncoder passwordEncoder;
     CurrencyService currencyService;
 
     @Autowired
@@ -22,19 +26,11 @@ public class UserService extends CrudService<User> {
     public UserService(JpaRepository<User, Long> repository, CurrencyService currencyService) {
         super(repository);
         this.currencyService = currencyService;
-        User brodo = new User("BrodoFagins","123", 1000000.0); //Temporary richboi
-        repository.save(brodo);
-
+        this.passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
-
-    @Override
-    public User createOrUpdate(User updateEntity) {
-        return null;
-    }
-
 
     public boolean buy(String username, String symbol, int amount) {
-        User user = findUserByUsername(username);
+        User user = loadUserByUsername(username);
 
         double currentFunds = user.getMoney();
         var intendedBuy = calculatePrice(symbol, amount);
@@ -54,7 +50,7 @@ public class UserService extends CrudService<User> {
     }
 
     public boolean sell(String username, String symbol, int amount) {
-        User user = findUserByUsername(username);
+        User user = loadUserByUsername(username);
 
         var currentCurrencies = user.getCurrencies();
 
@@ -78,12 +74,35 @@ public class UserService extends CrudService<User> {
         return true;
     }
 
-    public User findUserByUsername(String username) {
-        var user = repository.findAll().stream()
+
+    @Override
+    public User loadUserByUsername(String username) throws UsernameNotFoundException {
+        User foundUser = repository.findAll().stream()
                 .filter(users -> users.getUsername().equals(username))
                 .findAny()
                 .orElse(null);
-        return user;
+        return foundUser;
+    }
+
+    @Override
+    public User createOrUpdate(User user) {
+        if(loadUserByUsername(user.getUsername()) == null){
+            GrantedAuthority defaultAuthority = () -> "ROLE_USER";
+            String encodedPassword = passwordEncoder.encode(user.getPassword());
+
+            user.setPassword(encodedPassword);
+            user.addAuthority(defaultAuthority);
+
+            return repository.save(user);
+        } else {
+            var foundUser = loadUserByUsername(user.getUsername());
+            String updatedEncodedPassword = passwordEncoder.encode(user.getPassword());
+
+            foundUser.setPassword(updatedEncodedPassword);
+            foundUser.setAuthority(user.getAuthority());
+
+            return repository.save(foundUser);
+        }
     }
 
     protected Double calculatePrice(String symbol, int amount) {
@@ -93,7 +112,7 @@ public class UserService extends CrudService<User> {
 
 
     protected void addCurrency(String username, Currency currency) {
-        User user = findUserByUsername(username);
+        User user = loadUserByUsername(username);
 
         var updatedCurrencies = user.getCurrencies();
 
@@ -104,7 +123,7 @@ public class UserService extends CrudService<User> {
     }
 
     protected void removeCurrency(String username, List<Currency> currency) {
-        User user = findUserByUsername(username);
+        User user = loadUserByUsername(username);
 
         var updatedCurrencies = user.getCurrencies();
 
@@ -112,5 +131,9 @@ public class UserService extends CrudService<User> {
         user.setCurrencies(updatedCurrencies);
         repository.save(user);
         currencyRepository.saveAll(user.getCurrencies());
+    }
+
+    public PasswordEncoder getPasswordEncoder() {
+        return passwordEncoder;
     }
 }
