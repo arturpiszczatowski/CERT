@@ -7,6 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+
 @Service
 public class UserService extends CrudService<User> {
     CurrencyService currencyService;
@@ -41,7 +46,8 @@ public class UserService extends CrudService<User> {
         if(currency == null)
             return false;
 
-        addCurrency(username, currency, amount);
+        for(int i=amount; i>0; i--)
+        addCurrency(username, currency);
         user.setMoney(currentFunds - intendedBuy);
         repository.save(user);
         return true;
@@ -61,7 +67,12 @@ public class UserService extends CrudService<User> {
         if(amountOfAvailableCurrencies < amount)
             return false;
 
-        removeCurrency(username, symbol, (int) amountOfAvailableCurrencies);
+        var sellingCurrencies = currentCurrencies.stream()
+                .filter(currencies -> currencies.getSymbol().equals(symbol))
+                .limit(amount)
+                .collect(Collectors.toList());
+
+        removeCurrency(username, sellingCurrencies);
         user.setMoney(user.getMoney() + intendedSell);
         repository.save(user);
         return true;
@@ -81,25 +92,23 @@ public class UserService extends CrudService<User> {
     }
 
 
-    protected void addCurrency(String username, Currency currency, int amount) {
+    protected void addCurrency(String username, Currency currency) {
         User user = findUserByUsername(username);
+
         var updatedCurrencies = user.getCurrencies();
-        while (amount > 0) {
-            updatedCurrencies.add(currency);
-            amount--;
-        }
+
+        updatedCurrencies.add(currency);
         user.setCurrencies(updatedCurrencies);
         repository.save(user);
         currencyRepository.saveAll(user.getCurrencies());
     }
 
-    protected void removeCurrency(String username, String symbol, int amount) {
+    protected void removeCurrency(String username, List<Currency> currency) {
         User user = findUserByUsername(username);
+
         var updatedCurrencies = user.getCurrencies();
-        while (amount > 0) {
-            updatedCurrencies.remove(currencyService.findBySymbol(symbol));
-            amount--;
-        }
+
+        updatedCurrencies.removeAll(currency);
         user.setCurrencies(updatedCurrencies);
         repository.save(user);
         currencyRepository.saveAll(user.getCurrencies());
