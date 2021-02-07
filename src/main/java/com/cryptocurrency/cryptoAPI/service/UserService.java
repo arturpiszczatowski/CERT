@@ -78,7 +78,7 @@ public class UserService extends CrudService<User> {
         return true;
     }
 
-    protected User findUserByUsername(String username) {
+    public User findUserByUsername(String username) {
         var user = repository.findAll().stream()
                 .filter(users -> users.getUsername().equals(username))
                 .findAny()
