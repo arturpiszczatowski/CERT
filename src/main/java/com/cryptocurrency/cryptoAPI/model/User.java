@@ -55,4 +55,5 @@ public class User {
     public void setCurrencies(List<Currency> currencies) {
         this.currencies = currencies;
     }
+
 }
