@@ -40,11 +40,11 @@ public class UserService extends CrudService<User> implements UserDetailsService
 
         Currency currency = new Currency(symbol, currencyService.calcValueFor(symbol).get(symbol), user);
         //NUM07-J. Do not attempt comparisons with NaN
-        if(currency.getValue() == 0)
+        if(currency == null)
             return false;
 
         //NUM09-J. Do not use floating-point variables as loop counters
-        for(float i=amount; i>0f; i--)
+        for(int i=amount; i>0; i--)
         addCurrency(username, currency);
         user.setMoney(currentFunds - intendedBuy);
         repository.save(user);
