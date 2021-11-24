@@ -40,7 +40,7 @@ public class UserService extends CrudService<User> implements UserDetailsService
 
         Currency currency = new Currency(symbol, currencyService.calcValueFor(symbol).get(symbol), user);
         //NUM07-J. Do not attempt comparisons with NaN
-        if(currency == null)
+        if(currency.getValue() == 0)
             return false;
 
         //NUM09-J. Do not use floating-point variables as loop counters
