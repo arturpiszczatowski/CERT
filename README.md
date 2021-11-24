@@ -9,6 +9,6 @@ CERT/src/main/java/com/cryptocurrency/cryptoAPI/util/ApiConstants.java
 https://wiki.sei.cmu.edu/confluence/display/java/OBJ10-J.+Do+not+use+public+static+nonfinal+fields
 
 NUM07-J. Do not attempt comparisons with NaN
-CERT/src/main/java/com/cryptocurrency/cryptoAPI/util/ApiConstants.java
+CERT/src/main/java/com/cryptocurrency/cryptoAPI/service/UserService.java
 https://wiki.sei.cmu.edu/confluence/display/java/NUM07-J.+Do+not+attempt+comparisons+with+NaN
 
